@@ -10,7 +10,7 @@ name varchar(20),
 PRIMARY KEY (id)
 );
 
-CREATE TABLE role(
+CREATE TABLE roles(
 id INT NOT NULL AUTO_INCREMENT,
 title varchar(20),
 salary decimal,
@@ -27,8 +27,9 @@ role_id INT,
 manager_id INT,
 PRIMARY KEY (id),
 CONSTRAINT fk_role FOREIGN KEY (role_id)
-REFERENCES role(id),
+REFERENCES roles(id),
 CONSTRAINT fk_manager FOREIGN KEY (manager_id)
 REFERENCES employee(id)
+ON DELETE CASCADE
 );
 
