@@ -8,18 +8,18 @@ VALUES
 insert into roles
 (title, salary, department_id)
 VALUES
-('red', 100000, 1),
-('black', 75000, 1),
-('yellow', 60000, 1),
-('red', 100000, 2),
-('black', 75000, 2),
-('yellow', 60000, 2),
-('white', 100000, 3),
-('blue', 75000, 3),
-('black', 60000, 3),
-('white', 100000, 4),
-('blue', 75000, 4),
-('black', 60000, 4);
+('Trex', 100000, 1),
+('Mammoth', 75000, 1),
+('Tiger', 60000, 1),
+('Dragon', 100000, 2),
+('Lion', 75000, 2),
+('Griffen', 60000, 2),
+('BGKark', 100000, 3),
+('BGLogan', 75000, 3),
+('BGGammer', 60000, 3),
+('Crane', 100000, 4),
+('Wolf', 75000, 4),
+('Toad', 60000, 4);
 
 insert into employee
 (first_name, last_name, role_id, manager_id)
