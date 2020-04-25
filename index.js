@@ -54,7 +54,8 @@ const manage = () => {
                     addEmployee()
                     break;
                 case 'Remove employee':
-                    console.log('You chose: Remove employee')
+                    removeEmployee()
+                    
                     break;
                 case 'Update employee\'s role':
                     console.log('You chose: Update employee\'s role')
@@ -248,6 +249,7 @@ const addEmployee = () => {
                         if (err)
                         throw err
                         console.log(`Employee has added`)
+                        manage()
                     })
 
                 })
@@ -263,7 +265,36 @@ const addEmployee = () => {
 
 
 const removeEmployee = () => {
+    connection.query(`SELECT * FROM employee WHERE manager_id IS NOT NULL`, (err, res)=>{
+        if (err)
+        throw err
+        inquire.prompt({
+            name: 'remove',
+            type: 'list',
+            message: 'Select the employee you wish to remove.',
+            choices: function(){
+                let arr = res.map(function(remove){
+                    return {
+                        name: remove.first_name+' '+remove.last_name,
+                        value: remove.id
+                    }
+                 })    
 
+               
+                return arr
+            }
+        })
+        .then(answer =>{
+            const qString = `DELETE FROM employee WHERE id = ?`
+            connection.query(qString, [answer.remove], (err, name) =>{
+                if (err)
+                throw err 
+                console.log('Employee has been removed.')
+                manage()
+            })
+        })
+       
+    })
 };
 
 const updateRole = () => {
