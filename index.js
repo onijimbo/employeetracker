@@ -58,10 +58,11 @@ const manage = () => {
                     
                     break;
                 case 'Update employee\'s role':
-                    console.log('You chose: Update employee\'s role')
+                    updateRole()
                     break;
                 case 'Update employee\'s manager':
-                    console.log('You chose: Update employee\'s manager')
+                    updateManger()
+                    
                     break;
                 case 'Exit':
                     connection.end();
@@ -113,7 +114,7 @@ const byDepartmentView = () => {
         inquire.prompt({
             name: 'Department',
             type: 'list',
-            message: 'Choose a department',
+            message: 'Choose a department.',
             choices: function () {
                 let array = [];
                 for (let i = 0; i < name.length; i++) {
@@ -155,7 +156,7 @@ const byManagerView = () => {
         inquire.prompt({
             name: 'Manager',
             type: 'list',
-            message: 'choose a manager',
+            message: 'choose a manager to view team.',
             choices: function () {
                 let arr = res.map(function (employee) {
                     return {
@@ -248,7 +249,7 @@ const addEmployee = () => {
                     connection.query(qString, [answer.firstName, answer.lastName,answer.role,answer.eManager], (err, res) =>{
                         if (err)
                         throw err
-                        console.log(`Employee has added`)
+                        console.log(`Employee has added.`)
                         manage()
                     })
 
@@ -298,10 +299,99 @@ const removeEmployee = () => {
 };
 
 const updateRole = () => {
+    connection.query(`SELECT * FROM roles`, (err, roles)=>{
+        connection.query(`SELECT * FROM employee WHERE manager_id IS NOT NULL`, (err, res)=>{
+            if (err)
+            throw err
 
+            inquire.prompt([
+                {
+                    name: 'uRole',
+                    type: 'list',
+                    message: 'Select an employee for role update.',
+                    choices: function(){
+                        const arr = res.map(function(roleU){
+                            return {
+                                name: roleU.first_name+' '+roleU.last_name,
+                                value: roleU.id
+                            }
+                        })
+                        return arr
+                    }
+                },
+                {
+                    name: 'newRole',
+                    type: 'list',
+                    message: 'Select a new role.',
+                    choices: function(){
+                        const rArr = roles.map(function(roleU1){
+                            return{
+                                name: roleU1.title,
+                                value: roleU1.id
+                            }
+                        })
+                        return rArr
+                    }
+                }    
+            ])
+            .then((answer) =>{
+                const qString = `UPDATE employee SET role_id = ? WHERE id = ?`
+                connection.query(qString, [answer.newRole, answer.uRole], (err, respone)=>{
+                    if (err)
+                    throw err
+                    console.log('Employee\'s role has been updated.');
+                    manage()
+                })
+            })
+        })
+    })    
 };
 
 const updateManger = () => {
+    connection.query(`SELECT * FROM employee WHERE manager_id IS NOT NULL`, (err, res)=>{
+        connection.query(`SELECT * FROM employee WHERE manager_id IS NULL`, (err, man) =>{
+            if (err)
+            throw err
+            inquire.prompt([
+                {
+                    name: 'uManager',
+                    type: 'list',
+                    message: 'Select an employee for manager update.',
+                    choices: function(){
+                        const mArr = res.map(function(uMan){
+                            return {name: uMan.first_name+' '+uMan.last_name,
+                        value: uMan.id}
+                        })
+                        return mArr
+                    }
+                    
+                },
+                {
+                    name: 'newManager',
+                    type: 'list',
+                    message: 'Select the employee\'s manager.',
+                    choices: function(){
+                        const arr = man.map(function(newMan){
+                            return {name: newMan.first_name+' '+newMan.last_name,
+                        value: newMan.id}
+                        })
+                        return arr
+                    }
+                }
+                
+            ])
+            .then(function(answer){
+                const qString = `UPDATE employee SET manager_id = ? WHERE id = ?`
+                connection.query(qString, [answer.newManager, answer.uManager], (err, res)=>{
+                    if (err)
+                    throw err
+                    console.log('Employee\'s manager has been updated.')
+                    manage()
+                })
+            })
+        })
+        
+    })
 
 };
 
